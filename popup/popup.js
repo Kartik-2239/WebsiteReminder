@@ -15,7 +15,7 @@ chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
 });
 
 displayToWatchItems()
-clearBtn.addEventListener('toggle',()=>{
+clearBtn.addEventListener('click',()=>{
   savedItems = document.getElementsByClassName('subContainer')
   clearToWatchList(()=>{
     displayToWatchItems()
