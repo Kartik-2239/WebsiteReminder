@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminder App</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+    
+    <div id="headingContainer">
+        <h2>Website Reminder</h2>
+        <button id="changeTheme">Dark</button>
+    </div>
+    
+    
+    <div id="formContainer">
+        <input class="url" id="url" placeholder="Enter website URL">
+        <input class="title" id="title" placeholder="Enter reminder title">
+        
+        <div class="timeContainer">
+            <div class="time-row">
+                <span>Date:</span>
+                <input type="date" class="time" id="date">
+            </div>
+            
+            <div class="time-row">
+                <span>Time:</span>
+                <input type="time" class="time" id="time">
+            </div>
+        </div>
+        
+        <button class="Btn">Save Reminder</button>
+    </div>
+
+    
+
+    <div id="SaveContainermain">
+        <div class="header">
+            <h3 id="saveReminders">Saved Reminders</h3>
+            <button id="clearBtn">Clear All</button>
+        </div>
+        <div id="SaveContainer">
+
+        </div>
+        
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
