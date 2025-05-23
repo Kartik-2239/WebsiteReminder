@@ -3,7 +3,7 @@
   "description": "Easily copy current YouTube video URL",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions":["storage","tabs","alarms","notifications"],
+  "permissions":["storage","tabs","alarms","notifications","bookmarks"],
   "action": {
     "default_popup": "popup/popup.html"
   },
