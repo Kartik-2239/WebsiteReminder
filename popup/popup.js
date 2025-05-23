@@ -16,6 +16,7 @@ const allRemindersContainer = document.getElementById("allRemindersContainer");
 const reminderSearch = document.getElementById("reminderSearch");
 const filterButtons = document.querySelectorAll(".filter-btn");
 const clearBtn = document.getElementById("clearBtn");
+const getBookmarksBtn = document.getElementById("getBookMarks")
 
 // Set today's date as the default date
 const today = new Date();
@@ -210,6 +211,7 @@ btn.addEventListener("click", () => {
   }
 });
 
+
 //Functions
 function saveToWatchItem(title, url, time, date, callback) {
   const newItem = { title, url, time, date };
@@ -365,22 +367,23 @@ function filterReminders(filter) {
   });
 
   // Show empty state if no reminders are visible
-  let visibleCount = 0;
-  reminders.forEach((reminder) => {
-    if (reminder.style.display !== "none") {
-      visibleCount++;
-    }
-  });
+  // let visibleCount = 0;
+  // reminders.forEach((reminder) => {
+  //   if (reminder.style.display != "none") {
+  //     visibleCount++;
+  //   }
+  // });
 
-  if (visibleCount === 0) {
-    const emptyState = document.createElement("div");
-    emptyState.className = "empty-state";
-    emptyState.innerHTML = `
-      <i class="fa-regular fa-calendar"></i>
-      <p>No reminders found for this filter</p>
-    `;
-    allRemindersContainer.appendChild(emptyState);
-  }
+  // if (visibleCount === 0) {
+  //   const emptyState = document.createElement("div");
+  //   emptyState.className = "empty-state";
+  //   emptyState.innerHTML = `
+  //     <i class="fa-regular fa-calendar"></i>
+  //     <p>No reminders found for this filter</p>
+  //   `;
+    
+  //   allRemindersContainer.appendChild(emptyState);
+  // }
 }
 
 function searchReminders(searchTerm) {
@@ -417,3 +420,74 @@ function searchReminders(searchTerm) {
     allRemindersContainer.appendChild(emptyState);
   }
 }
+
+
+function getAllBookmarks() {
+    let bookmarks = [];
+    chrome.bookmarks.getTree(tree => {
+      let arrs = tree[0].children;
+
+      for (let arr of arrs) {
+        for (let subarr of arr.children) {
+          if (subarr.children) {
+            for (let subsubarr of subarr.children) {
+              bookmarks.push({
+                title: subsubarr.title,
+                url: subsubarr.url
+              });
+            }
+          } else {
+            bookmarks.push({
+              title: subarr.title,
+              url: subarr.url
+            });
+          }
+        }
+      }
+
+    });
+    return bookmarks
+}
+
+
+function asyncSaveToWatchItem(title, url, time, date, callback) {
+  return new Promise((resolve, reject) => {
+    const newItem = { title, url, time, date };
+
+    chrome.storage.local.get(['toWatchList'], (result) => {
+      const currentList = result.toWatchList || [];
+      const titles = currentList.map(item => item.title);
+      currentList.push(newItem);
+
+      if(!titles.includes(title)){
+          chrome.storage.local.set({ toWatchList: currentList }, () => {
+          if (chrome.runtime.lastError) {
+            reject(chrome.runtime.lastError);
+          } else {
+            console.log('Saved:', newItem);
+            if (callback) callback();
+            resolve(); // <-- THIS was missing
+          }
+        });
+      }
+    });
+  });
+}
+
+
+
+const bookmarks2 = getAllBookmarks()
+const bookmarkBtn = document.getElementById('getBookMarks')
+bookmarkBtn.addEventListener('click',async ()=>{
+  
+  console.log(bookmarks2)
+
+  for (i = 0;i<bookmarks2.length;i++){
+    const bookmark = bookmarks2[i]
+    console.log
+    await asyncSaveToWatchItem(bookmark.title,bookmark.url,'','',()=>{displayAllReminders()})
+  }
+})
+
+
+
