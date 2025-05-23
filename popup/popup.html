@@ -1,51 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reminder App</title>
-    <link rel="stylesheet" href="popup.css">
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <!-- Main Screen -->
+    <div id="mainScreen" class="screen active">
+      <div id="headingContainer">
+        <h2>
+          <img src="../images/alarm.svg" alt="Alarm" class="header-icon" />
+          Website Reminder
+        </h2>
+        <button id="changeTheme">
+          <i class="fa-solid fa-moon dark-icon"></i>
+          <i class="fa-solid fa-sun light-icon"></i>
+          <span>Dark</span>
+        </button>
+      </div>
 
-    
-    <div id="headingContainer">
-        <h2>Website Reminder</h2>
-        <button id="changeTheme">Dark</button>
-    </div>
-    
-    
-    <div id="formContainer">
-        <input class="url" id="url" placeholder="Enter website URL">
-        <input class="title" id="title" placeholder="Enter reminder title">
-        
+      <div id="formContainer">
+        <div class="input-group">
+          <i class="fa-solid fa-link input-icon"></i>
+          <input class="url" id="url" placeholder="Enter website URL" />
+        </div>
+
+        <div class="input-group">
+          <i class="fa-solid fa-heading input-icon"></i>
+          <input class="title" id="title" placeholder="Enter reminder title" />
+        </div>
+
         <div class="timeContainer">
-            <div class="time-row">
-                <span>Date:</span>
-                <input type="date" class="time" id="date">
-            </div>
-            
-            <div class="time-row">
-                <span>Time:</span>
-                <input type="time" class="time" id="time">
-            </div>
+          <div class="time-row">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Date:</span>
+            <input type="date" class="time" id="date" />
+          </div>
+
+          <div class="time-row">
+            <i class="fa-solid fa-clock"></i>
+            <span>Time:</span>
+            <input type="time" class="time" id="time" />
+          </div>
+
+          <div class="reminder-time-info">
+            <i class="fa-solid fa-bell-on"></i>
+            <span id="reminderTimeText"
+              >Select date and time to see when you'll be reminded</span
+            >
+          </div>
         </div>
-        
-        <button class="Btn">Save Reminder</button>
+
+        <div class="perspective-wrapper">
+          <button class="Btn">
+            <div class="btn-highlight-top"></div>
+            <div class="btn-highlight-bottom"></div>
+            <div class="btn-highlight-moving"></div>
+            <div class="btn-edge-highlight"></div>
+            <span class="btn-content">
+              <i class="fa-solid fa-floppy-disk"></i> Save Reminder
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="perspective-wrapper mt-4">
+        <button id="viewAllBtn" class="show-reminders-btn">
+          <div class="btn-highlight-top"></div>
+          <div class="btn-highlight-bottom"></div>
+          <div class="btn-highlight-moving"></div>
+          <!-- <div class="btn-edge-highlight"></div> -->
+          <span class="btn-content">
+            <i class="fa-solid fa-calendar-check"></i> Show Upcoming Reminders
+          </span>
+        </button>
+      </div>
     </div>
 
-    
+    <!-- Upcoming Reminders Screen -->
+    <div id="upcomingScreen" class="screen">
+      <div class="screen-header">
+        <button id="backBtn" class="back-btn">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h2>All Upcoming Reminders</h2>
+        <button id="clearBtn" class="clear-btn">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
 
-    <div id="SaveContainermain">
-        <div class="header">
-            <h3 id="saveReminders">Saved Reminders</h3>
-            <button id="clearBtn">Clear All</button>
+      <div class="reminder-filters">
+        <div class="search-container">
+          <i class="fa-solid fa-search"></i>
+          <input
+            type="text"
+            id="reminderSearch"
+            placeholder="Search reminders..."
+          />
         </div>
-        <div id="SaveContainer">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="today">Today</button>
+          <button class="filter-btn" data-filter="week">This Week</button>
+        </div>
+      </div>
 
-        </div>
-        
+      <div id="allRemindersContainer" class="reminders-list"></div>
     </div>
+
     <script src="popup.js"></script>
-</body>
+  </body>
 </html>
