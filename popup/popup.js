@@ -17,6 +17,8 @@ const reminderSearch = document.getElementById("reminderSearch");
 const filterButtons = document.querySelectorAll(".filter-btn");
 const clearBtn = document.getElementById("clearBtn");
 const getBookmarksBtn = document.getElementById("getBookMarks")
+const upcomingReminders = document.getElementById('upcomingReminders')
+
 
 // Set today's date as the default date
 const today = new Date();
@@ -33,10 +35,14 @@ enteredTime.value = `${hours}:${minutes}`;
 // Update reminder time text initially
 updateReminderTimeText();
 
+// Set number of reminders
+
 // Update reminder time text when date or time changes
 enteredDate.addEventListener("change", updateReminderTimeText);
 enteredTime.addEventListener("change", updateReminderTimeText);
 enteredTime.addEventListener("input", updateReminderTimeText);
+
+
 
 // Function to update the reminder time text
 function updateReminderTimeText() {
@@ -45,7 +51,7 @@ function updateReminderTimeText() {
       enteredDate.value,
       enteredTime.value
     );
-    reminderTimeText.textContent = `We will remind you ${timeUntil}`;
+    reminderTimeText.textContent = `You will be reminded in ${timeUntil}`;
     reminderTimeInfo.classList.add("active");
   } else {
     reminderTimeText.textContent =
@@ -62,7 +68,7 @@ function getHumanReadableTimeUntil(date, time) {
 
   // If the date is in the past
   if (diffMs < 0) {
-    return "in the past :)";
+    return "in the past";
   }
 
   const diffSecs = Math.floor(diffMs / 1000);
@@ -102,6 +108,8 @@ viewAllBtn.addEventListener("click", () => {
   displayAllReminders();
 });
 
+
+
 backBtn.addEventListener("click", () => {
   upcomingScreen.classList.remove("active");
   mainScreen.classList.add("active");
@@ -123,28 +131,7 @@ reminderSearch.addEventListener("input", () => {
   searchReminders(searchTerm);
 });
 
-// 3D button effect - track mouse movement
-btn.addEventListener("mousemove", (e) => {
-  const rect = btn.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  const highlightEl = btn.querySelector(".btn-highlight-moving");
-  highlightEl.style.left = `${x - 50}px`;
-  highlightEl.style.top = `${y - 50}px`;
-});
-
-// Same for the view all button
-viewAllBtn.addEventListener("mousemove", (e) => {
-  const rect = viewAllBtn.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  const highlightEl = viewAllBtn.querySelector(".btn-highlight-moving");
-  highlightEl.style.left = `${x - 50}px`;
-  highlightEl.style.top = `${y - 50}px`;
-});
-
+// Current Tab url
 chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
   url.value = tabs[0].url;
 });
@@ -158,6 +145,7 @@ clearBtn.addEventListener("click", () => {
     chrome.runtime.sendMessage({
       msg: "removeAllAlarms",
     });
+    upcomingReminders.textContent = `All Upcoming Reminders`
   }
 });
 
@@ -183,6 +171,7 @@ themeBtn.addEventListener("click", () => {
     themeBtn.querySelector("span").textContent = "Dark";
   }
 });
+
 
 btn.addEventListener("click", () => {
   if (url.value != "" && title.value != "") {
@@ -274,11 +263,47 @@ function displayAllReminders() {
         deleteReminder(item);
       };
 
-      container.appendChild(subContainer);
+      // const editBtn = document.createElement("button")
+      // editBtn.className = "editBtn";
+      // editBtn.textContent = "Dupe";
+      // editBtn.onclick = ()=>{
+      //   editBtn.id = "removeThis"
+      //   upcomingScreen.classList.remove("active");
+      //   mainScreen.classList.add("active");
+      //   title.value = item.title
+      //   url.value = item.url
+      //   enteredDate.value = item.date
+      //   enteredTime.value = item.time
+
+      //   chrome.runtime.onMessage.addListener(
+      //     async function(request, sender, sendResponse) {
+      //       if (request.msg === "alarmFinished"){
+      //         console.log('reminderList')
+      //         console.log(request.name)
+      //         chrome.storage.local.get(['toWatchList'], (result) => {
+      //           let currentlyList = result.toWatchList || []
+      //           let neededList = []
+      //           for (let i = 0;i<currentlyList.length;i++){
+      //             if (currentlyList[i].title !== item.name){ 
+      //               neededList.push(currentlyList[i])
+      //             }
+      //           }
+      //           chrome.storage.local.set({ toWatchList: neededList })
+      //         })
+
+      //       }
+      //       displayAllReminders()
+      //   })
+
+      // }
+
+      container.prepend(subContainer);
       subContainer.appendChild(titleElem);
       subContainer.appendChild(urlElem);
       subContainer.appendChild(timeElem);
+      //subContainer.appendChild(editBtn)
       subContainer.appendChild(deleteBtn);
+
     });
   });
 }
@@ -366,24 +391,6 @@ function filterReminders(filter) {
     }
   });
 
-  // Show empty state if no reminders are visible
-  // let visibleCount = 0;
-  // reminders.forEach((reminder) => {
-  //   if (reminder.style.display != "none") {
-  //     visibleCount++;
-  //   }
-  // });
-
-  // if (visibleCount === 0) {
-  //   const emptyState = document.createElement("div");
-  //   emptyState.className = "empty-state";
-  //   emptyState.innerHTML = `
-  //     <i class="fa-regular fa-calendar"></i>
-  //     <p>No reminders found for this filter</p>
-  //   `;
-    
-  //   allRemindersContainer.appendChild(emptyState);
-  // }
 }
 
 function searchReminders(searchTerm) {
@@ -466,15 +473,13 @@ function asyncSaveToWatchItem(title, url, time, date, callback) {
           } else {
             console.log('Saved:', newItem);
             if (callback) callback();
-            resolve(); // <-- THIS was missing
+            resolve(); 
           }
         });
       }
     });
   });
 }
-
-
 
 const bookmarks2 = getAllBookmarks()
 const bookmarkBtn = document.getElementById('getBookMarks')
@@ -487,7 +492,7 @@ bookmarkBtn.addEventListener('click',async ()=>{
     console.log
     await asyncSaveToWatchItem(bookmark.title,bookmark.url,'','',()=>{displayAllReminders()})
   }
+  alert('bookmarks imported')
 })
-
 
 
