@@ -32,14 +32,28 @@ chrome.runtime.onMessage.addListener(
 
     
 chrome.alarms.onAlarm.addListener((alarm) => {
+
     console.log('Alarm fired:', alarm.name);
-    chrome.notifications.create({
-    type: 'basic',
-    iconUrl: 'images/icon-48.png',
-    title: 'Alarm finished',
-    message: `Alarm "${alarm.name}" has ended.`,
-    priority: 2
-  });
+        chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'images/icon-48.png',
+        title: `Reminder ${alarm.name}`,
+        message: `Reminder "${alarm.name}" has ended.`,
+        priority: 2
+    });
+
+
+    console.log('reminderList')
+    console.log(alarm.name)
+    chrome.storage.local.get(['toWatchList'], (result) => {
+        let currentlyList = result.toWatchList || []
+        for (let i = 0;i<currentlyList.length;i++){
+        if (currentlyList[i].title === alarm.name){ 
+            currentlyList[i].title += ' ✓'
+        }
+        }
+        chrome.storage.local.set({ toWatchList: currentlyList })
+    })
 });
 
 
