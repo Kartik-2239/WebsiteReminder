@@ -1,4 +1,3 @@
-
 let userAlarms = []
 
 chrome.runtime.onMessage.addListener(
